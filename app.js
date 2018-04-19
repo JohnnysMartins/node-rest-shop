@@ -1,6 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 const app = express()
@@ -11,8 +11,8 @@ const orderRoutes = require('./api/routes/orders')
 mongoose.connect(`mongodb+srv://johnnys-martins:${process.env.DB_PASSWORD}@node-rest-shop-ctmrw.mongodb.net/test`)
 
 app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')

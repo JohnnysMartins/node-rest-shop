@@ -1,36 +1,59 @@
 const express = require('express')
+const mongoose = require('mongoose')
+const Order = require('../models/order')
+const Product = require('../models/product')
+
 const router = express.Router()
 
+
 router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Orders were fetched'
-    })
+    Order.find()
+        .exec()
+        .then(docs => {
+            res.status(200).json(docs)
+        })
+        .catch(err => {
+            res.status(500).json({ error: err })
+        })
 })
 
 router.post('/', (req, res, next) => {
-    const order = {
-        productId: req.body.productId,
-        quantity: req.body.quantity
-    }
-
-    res.status(201).json({
-        message: 'Orders was created',
-        createdOrder: order
-    })
+    const id = req.body.productId
+    Product.findById(id).exec()
+        .then(product => {
+            const order = new Order({
+                _id: mongoose.Types.ObjectId(),
+                quantity: req.body.quantity,
+                product: id
+            })
+            return order.save()
+        })
+        .then(result => {
+            res.status(200).json(result)
+        }).catch(err => {
+            res.status(500).json(err)
+        })
 })
 
 router.get('/:orderId', (req, res, next) => {
-    res.status(200).json({
-        message: 'Orders details',
-        orderId: req.params.orderId
-    })
+    const id = req.params.orderId
+    Order.findById(id).exec()
+        .then(result => {
+            res.status(200).json(result)
+        }).catch(err => {
+            res.status(500).json({ error: err })
+        })
 })
 
-router.get('/:orderId', (req, res, next) => {
-    res.status(200).json({
-        message: 'Orders deleted',
-        orderId: req.params.orderId
-    })
+router.delete('/:orderId', (req, res, next) => {
+    const id = req.params.orderId
+    Order.remove({ _id: id }).exec()
+        .then(result => {
+            res.status(200).json({ message: 'Orders deleted' })
+        })
+        .catch(err => {
+            res.status(500).json({ error: err })
+        })
 })
 
 module.exports = router
