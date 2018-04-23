@@ -11,6 +11,7 @@ const orderRoutes = require('./api/routes/orders')
 mongoose.connect(`mongodb+srv://johnnys-martins:${process.env.DB_PASSWORD}@node-rest-shop-ctmrw.mongodb.net/test`)
 
 app.use(morgan('dev'))
+app.use('/uploads', express.static('uploads'))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
